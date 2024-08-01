@@ -9,9 +9,9 @@ def one_vs_rest_svm(train_x: np.ndarray, train_y: np.ndarray, test_x: np.ndarray
     Trains a linear SVM for binary classifciation
 
     Args:
-        train_x - (n, d) NumPy array (n datapoints each with d features)
+        train_x - (n, d) NumPy array (n data points each with d features)
         train_y - (n, ) NumPy array containing the labels (0 or 1) for each training data point
-        test_x - (m, d) NumPy array (m datapoints each with d features)
+        test_x - (m, d) NumPy array (m data points each with d features)
     Returns:
         pred_test_y - (m,) NumPy array containing the labels (0 or 1) for each test data point
     """
@@ -26,9 +26,9 @@ def multi_class_svm(train_x, train_y, test_x):
     Trains a linear SVM for multiclass classifciation using a one-vs-rest strategy
 
     Args:
-        train_x - (n, d) NumPy array (n datapoints each with d features)
+        train_x - (n, d) NumPy array (n data points each with d features)
         train_y - (n, ) NumPy array containing the labels (int) for each training data point
-        test_x - (m, d) NumPy array (m datapoints each with d features)
+        test_x - (m, d) NumPy array (m data points each with d features)
     Returns:
         pred_test_y - (m,) NumPy array containing the labels (int) for each test data point
     """

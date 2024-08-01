@@ -11,8 +11,8 @@ def polynomial_kernel(X, Y, c, p):
         for each pair of rows x in X and y in Y.
 
         Args:
-            X - (n, d) NumPy array (n datapoints each with d features)
-            Y - (m, d) NumPy array (m datapoints each with d features)
+            X - (n, d) NumPy array (n data points each with d features)
+            Y - (m, d) NumPy array (m data points each with d features)
             c - a coefficient to trade off high-order and low-order terms (scalar)
             p - the degree of the polynomial kernel
 
@@ -31,8 +31,8 @@ def rbf_kernel(X, Y, gamma):
         for each pair of rows x in X and y in Y.
 
         Args:
-            X - (n, d) NumPy array (n datapoints each with d features)
-            Y - (m, d) NumPy array (m datapoints each with d features)
+            X - (n, d) NumPy array (n data points each with d features)
+            Y - (m, d) NumPy array (m data points each with d features)
             gamma - the gamma parameter of gaussian function (scalar)
 
         Returns:

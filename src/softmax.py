@@ -14,32 +14,43 @@ def augment_feature_vector(X):
     Args:
         X - a NumPy matrix of n data points, each with d - 1 features
 
-    Returns: X_augment, an (n, d) NumPy array with the added feature for each datapoint
+    Returns: X_augment, an (n, d) NumPy array with the added feature for each data point
     """
     column_of_ones = np.zeros([len(X), 1]) + 1
     return np.hstack((column_of_ones, X))
 
-def compute_probabilities(X, theta, temp_parameter):
+def compute_probabilities(X: np.ndarray, theta: np.ndarray, temp_parameter: float):
     """
-    Computes, for each datapoint X[i], the probability that X[i] is labeled as j
+    Computes, for each data point X[i], the probability that X[i] is labelled as j
     for j = 0, 1, ..., k-1
 
     Args:
-        X - (n, d) NumPy array (n datapoints each with d features)
+        X - (n, d) NumPy array (n data points each with d features)
         theta - (k, d) NumPy array, where row j represents the parameters of our model for label j
         temp_parameter - the temperature parameter of softmax function (scalar)
     Returns:
-        H - (k, n) NumPy array, where each entry H[j][i] is the probability that X[i] is labeled as j
+        H - (k, n) NumPy array, where each entry H[j][i] is the probability that X[i] is labelled as j
     """
     #YOUR CODE HERE
-    raise NotImplementedError
+    H = theta @ X.T / temp_parameter
+    c = np.max(H, axis=0)
+    H -= c
+    H = np.exp(H)
+    div = np.sum(H, axis=0)
+    H /= div
+    return H
 
-def compute_cost_function(X, Y, theta, lambda_factor, temp_parameter):
+def compute_cost_function(
+        X: np.ndarray,
+        Y: np.ndarray,
+        theta: np.ndarray,
+        lambda_factor: float,
+        temp_parameter: float):
     """
-    Computes the total cost over every datapoint.
+    Computes the total cost over every data point.
 
     Args:
-        X - (n, d) NumPy array (n datapoints each with d features)
+        X - (n, d) NumPy array (n data points each with d features)
         Y - (n, ) NumPy array containing the labels (a number from 0-9) for each
             data point
         theta - (k, d) NumPy array, where row j represents the parameters of our
@@ -51,14 +62,24 @@ def compute_cost_function(X, Y, theta, lambda_factor, temp_parameter):
         c - the cost value (scalar)
     """
     #YOUR CODE HERE
-    raise NotImplementedError
+    n = len(Y)
+    H = compute_probabilities(X, theta, temp_parameter)
+    H_log = np.log(np.choose(Y, H))
+    sum = -np.sum(H_log) / n + lambda_factor / 2 * np.sum(theta * theta)
+    return sum
 
-def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_parameter):
+def run_gradient_descent_iteration(
+        X: np.ndarray,
+        Y: np.ndarray,
+        theta: np.ndarray,
+        alpha: float,
+        lambda_factor: float,
+        temp_parameter: float):
     """
     Runs one step of batch gradient descent
 
     Args:
-        X - (n, d) NumPy array (n datapoints each with d features)
+        X - (n, d) NumPy array (n data points each with d features)
         Y - (n, ) NumPy array containing the labels (a number from 0-9) for each
             data point
         theta - (k, d) NumPy array, where row j represents the parameters of our
@@ -71,7 +92,24 @@ def run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_param
         theta - (k, d) NumPy array that is the final value of parameters theta
     """
     #YOUR CODE HERE
-    raise NotImplementedError
+    k = theta.shape[0]
+    n = len(Y)
+    H = compute_probabilities(X, theta, temp_parameter)
+
+    M = sparse.coo_matrix(([1] * n, (Y, range(n))), shape=(k, n)).toarray()
+    theta_g = -(M - H) @ X / (temp_parameter * n) + lambda_factor * theta
+    theta -= alpha * theta_g
+
+    # Alternative:
+    # theta_g = np.zeros(theta.shape) # Theta gradient
+    # for i in range(k):
+    #     Y_i = (Y == i).astype(int)
+    #     theta_g[i] = -np.sum(X * (Y_i - H[i]).reshape((len(Y), 1)), axis=0) / (temp_parameter * n) + lambda_factor * theta[i]
+    
+    # theta -= alpha * theta_g
+
+    return theta
+
 
 def update_y(train_y, test_y):
     """
@@ -80,15 +118,15 @@ def update_y(train_y, test_y):
 
     Args:
         train_y - (n, ) NumPy array containing the labels (a number between 0-9)
-                 for each datapoint in the training set
+                 for each data point in the training set
         test_y - (n, ) NumPy array containing the labels (a number between 0-9)
-                for each datapoint in the test set
+                for each data point in the test set
 
     Returns:
         train_y_mod3 - (n, ) NumPy array containing the new labels (a number between 0-2)
-                     for each datapoint in the training set
+                     for each data point in the training set
         test_y_mod3 - (n, ) NumPy array containing the new labels (a number between 0-2)
-                    for each datapoint in the test set
+                    for each data point in the test set
     """
     #YOUR CODE HERE
     raise NotImplementedError
@@ -98,7 +136,7 @@ def compute_test_error_mod3(X, Y, theta, temp_parameter):
     Returns the error of these new labels when the classifier predicts the digit. (mod 3)
 
     Args:
-        X - (n, d - 1) NumPy array (n datapoints each with d - 1 features)
+        X - (n, d - 1) NumPy array (n data points each with d - 1 features)
         Y - (n, ) NumPy array containing the labels (a number from 0-2) for each
             data point
         theta - (k, d) NumPy array, where row j represents the parameters of our
@@ -111,7 +149,14 @@ def compute_test_error_mod3(X, Y, theta, temp_parameter):
     #YOUR CODE HERE
     raise NotImplementedError
 
-def softmax_regression(X, Y, temp_parameter, alpha, lambda_factor, k, num_iterations):
+def softmax_regression(
+        X: np.ndarray,
+        Y: np.ndarray,
+        temp_parameter: float,
+        alpha: float,
+        lambda_factor: float,
+        k: int,
+        num_iterations: int):
     """
     Runs batch gradient descent for a specified number of iterations on a dataset
     with theta initialized to the all-zeros array. Here, theta is a k by d NumPy array
@@ -136,8 +181,20 @@ def softmax_regression(X, Y, temp_parameter, alpha, lambda_factor, k, num_iterat
     theta = np.zeros([k, X.shape[1]])
     cost_function_progression = []
     for i in range(num_iterations):
-        cost_function_progression.append(compute_cost_function(X, Y, theta, lambda_factor, temp_parameter))
-        theta = run_gradient_descent_iteration(X, Y, theta, alpha, lambda_factor, temp_parameter)
+        cost_function_progression.append(
+            compute_cost_function(
+                X,
+                Y,
+                theta,
+                lambda_factor,
+                temp_parameter))
+        theta = run_gradient_descent_iteration(
+            X,
+            Y,
+            theta,
+            alpha,
+            lambda_factor,
+            temp_parameter)
     return theta, cost_function_progression
 
 def get_classification(X, theta, temp_parameter):
