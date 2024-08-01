@@ -129,7 +129,7 @@ def update_y(train_y, test_y):
                     for each data point in the test set
     """
     #YOUR CODE HERE
-    raise NotImplementedError
+    return train_y % 3, test_y % 3
 
 def compute_test_error_mod3(X, Y, theta, temp_parameter):
     """
@@ -147,7 +147,7 @@ def compute_test_error_mod3(X, Y, theta, temp_parameter):
         test_error - the error rate of the classifier (scalar)
     """
     #YOUR CODE HERE
-    raise NotImplementedError
+    return 1 - np.mean(Y == (get_classification(X, theta, temp_parameter) % 3))
 
 def softmax_regression(
         X: np.ndarray,
@@ -197,7 +197,7 @@ def softmax_regression(
             temp_parameter)
     return theta, cost_function_progression
 
-def get_classification(X, theta, temp_parameter):
+def get_classification(X: np.ndarray, theta: np.ndarray, temp_parameter: float):
     """
     Makes predictions by classifying a given dataset
 
