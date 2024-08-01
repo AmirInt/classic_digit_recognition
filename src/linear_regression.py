@@ -2,12 +2,12 @@ import numpy as np
 
 ### Functions for you to fill in ###
 
-def closed_form(X, Y, lambda_factor):
+def closed_form(X: np.ndarray, Y, lambda_factor):
     """
     Computes the closed form solution of linear regression with L2 regularization
 
     Args:
-        X - (n, d + 1) NumPy array (n datapoints each with d features plus the bias feature in the first dimension)
+        X - (n, d + 1) NumPy array (n data points each with d features plus the bias feature in the first dimension)
         Y - (n, ) NumPy array containing the labels (a number from 0-9) for each
             data point
         lambda_factor - the regularization constant (scalar)
@@ -16,7 +16,10 @@ def closed_form(X, Y, lambda_factor):
         represents the y-axis intercept of the model and therefore X[0] = 1
     """
     # YOUR CODE HERE
-    raise NotImplementedError
+    XTX = X.T @ X
+    S = XTX + lambda_factor * np.identity(XTX.shape[0])
+    theta = np.linalg.inv(S) @ X.T @ Y
+    return theta
 
 ### Functions which are already complete, for you to use ###
 
