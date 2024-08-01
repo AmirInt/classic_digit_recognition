@@ -225,7 +225,7 @@ def check_update_y():
         return
     log(green("PASS"), ex_name, "")
 
-###Correction note:  check_project_onto_PC fucntion have been modified since release.
+###Correction note: check_project_onto_PC function have been modified since release.
 def check_project_onto_PC():
     ex_name = "Project onto PC"
     X = np.array([
@@ -236,6 +236,7 @@ def check_project_onto_PC():
     ]);
     x_centered, feature_means = features.center_data(X)
     pcs = features.principal_components(x_centered)
+    print(pcs.shape)
     exp_res = np.array([
         [-5.61248608, 0],
         [-1.87082869, 0],
