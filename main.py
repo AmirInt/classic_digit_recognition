@@ -23,7 +23,6 @@ def run_linear_regression_on_MNIST(lambda_factor=1):
     test_error = compute_test_error_linear(test_x_bias, test_y, theta)
     return test_error
 
-# TODO: first fill out functions in svm.py, or the functions below will not work
 def run_svm_one_vs_rest_on_MNIST():
     """
     Trains svm, classifies test data, computes test error on test set
@@ -102,8 +101,9 @@ def main():
     # 3. Support Vector Machine
     #######################################################################
         
-    elif sys.argv[1] == "svm":
+    elif sys.argv[1] == "svm_one_v_rest":
         print('SVM one vs. rest test_error:', run_svm_one_vs_rest_on_MNIST())
+    elif sys.argv[1] == "multi_svm":
         print('Multiclass SVM test_error:', run_multiclass_svm_on_MNIST())
 
     #######################################################################
