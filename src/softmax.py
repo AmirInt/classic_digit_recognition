@@ -180,7 +180,7 @@ def softmax_regression(
     X = augment_feature_vector(X)
     theta = np.zeros([k, X.shape[1]])
     cost_function_progression = []
-    for i in range(num_iterations):
+    for _ in range(num_iterations):
         cost_function_progression.append(
             compute_cost_function(
                 X,
@@ -222,6 +222,5 @@ def plot_cost_function_over_time(cost_function_history):
     plt.show()
 
 def compute_test_error(X, Y, theta, temp_parameter):
-    error_count = 0.
     assigned_labels = get_classification(X, theta, temp_parameter)
     return 1 - np.mean(assigned_labels == Y)

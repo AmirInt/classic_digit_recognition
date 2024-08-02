@@ -1,6 +1,5 @@
 import sys
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.svm import SVC
 from src.utils import *
 from src.linear_regression import *
@@ -251,7 +250,7 @@ def run_cubic_svm_on_MNIST(n_components=10):
     clf.fit(train_x_pca, train_y)
 
     predict_y = clf.predict(test_x_pca)
-    test_error = 1 - np.mean(predict_y == test_y)    
+    test_error = 1 - np.mean(predict_y == test_y)
     return test_error
 
 
@@ -274,75 +273,101 @@ def run_rbf_svm_on_MNIST(n_components=10):
     return test_error
 
 
+def display_usage():
+    print("Usage: 'python3 main.py [option]")
+    print("Options:")
+    print("\t'plot_sample_data': Display the first few of the MNIST train set images")
+    print("\t'linear_regression': Run the linear regression algorithm and display the test error")
+    print("\t'svm_one_vs_rest': Run the SVM algorithm for classification of data in the One vs. Rest scheme and display the test error")
+    print("\t'multi_svm': Run the Multi-class SVM algorithm for classification and report the test error")
+    print("\t'softmax': Run the softmax classification algorithm and display the test errors for three temperature parameters")
+    print("\t'softmax_mod3': Run the softmax classification with labels changed to their modulo 3 values and display the test error")
+    print("\t'pca': Run the softmax classification with dimensionality reduction via PCA and display the test error")
+    print("\t'plot_pca': Display the reconstruction of the first two train set data points after dimension reduction")
+    print("\t'cubic': Run the softmax classification with the cubic kernel function and display the test error")
+    print("\t'cubic_svm': Run the non-linear SVM algorithm using the cubic polynomial kernel and display the test error")
+    print("\t'rbf_svm': Run the non-linear SVM algorithm using the RBF kernel and display the test error")
+    print("Note: More options to come")
+
+
 def main():
     #######################################################################
     # 1. Introduction
     #######################################################################
+    try:
+        if sys.argv[1] == "plot_sample_data":
+            # Load MNIST data:
+            train_x, _, _, _ = get_MNIST_data()
+            print("Loaded MNIST data")
+            # Plot the first 20 images of the training set.
+            plot_images(train_x[0:20, :])
 
-    if sys.argv[1] == "plot_data":
-        # Load MNIST data:
-        train_x, _, _, _ = get_MNIST_data()
-        print("Loaded MNIST data")
-        # Plot the first 20 images of the training set.
-        plot_images(train_x[0:20, :])
+        #######################################################################
+        # 2. Linear Regression with Closed Form Solution
+        #######################################################################
 
-    #######################################################################
-    # 2. Linear Regression with Closed Form Solution
-    #######################################################################
+        elif sys.argv[1] == "linear_regression":
+            print('Linear Regression test_error =', run_linear_regression_on_MNIST(lambda_factor=1))
+            print('Linear Regression test_error =', run_linear_regression_on_MNIST(lambda_factor=0.1))
+            print('Linear Regression test_error =', run_linear_regression_on_MNIST(lambda_factor=0.01))
 
-    elif sys.argv[1] == "linear_regression":
-        print('Linear Regression test_error =', run_linear_regression_on_MNIST(lambda_factor=1))
-        print('Linear Regression test_error =', run_linear_regression_on_MNIST(lambda_factor=0.1))
-        print('Linear Regression test_error =', run_linear_regression_on_MNIST(lambda_factor=0.01))
+        #######################################################################
+        # 3. Support Vector Machine
+        #######################################################################
+            
+        elif sys.argv[1] == "svm_one_v_rest":
+            print('SVM one vs. rest test_error:', run_svm_one_vs_rest_on_MNIST())
+        elif sys.argv[1] == "multi_svm":
+            print('Multiclass SVM test_error:', run_multiclass_svm_on_MNIST())
 
-    #######################################################################
-    # 3. Support Vector Machine
-    #######################################################################
-        
-    elif sys.argv[1] == "svm_one_v_rest":
-        print('SVM one vs. rest test_error:', run_svm_one_vs_rest_on_MNIST())
-    elif sys.argv[1] == "multi_svm":
-        print('Multiclass SVM test_error:', run_multiclass_svm_on_MNIST())
+        #######################################################################
+        # 4. Multinomial (Softmax) Regression and Gradient Descent
+        #######################################################################
 
-    #######################################################################
-    # 4. Multinomial (Softmax) Regression and Gradient Descent
-    #######################################################################
+        elif sys.argv[1] == "softmax":
+            print('softmax test_error=', run_softmax_on_MNIST(temp_parameter=0.5))
+            print('softmax test_error=', run_softmax_on_MNIST(temp_parameter=1))
+            print('softmax test_error=', run_softmax_on_MNIST(temp_parameter=2))
 
-    elif sys.argv[1] == "softmax":
-        # print('softmax test_error=', run_softmax_on_MNIST(temp_parameter=0.5))
-        print('softmax test_error=', run_softmax_on_MNIST(temp_parameter=1))
-        # print('softmax test_error=', run_softmax_on_MNIST(temp_parameter=2))
+        #######################################################################
+        # 6. Changing Labels
+        #######################################################################
 
-    #######################################################################
-    # 6. Changing Labels
-    #######################################################################
+        elif sys.argv[1] == "softmax_mod3":
+            print('softmax test_error_mod3=', run_softmax_on_MNIST_mod3(temp_parameter=1))
 
-    elif sys.argv[1] == "softmax_mod3":
-        print('softmax test_error_mod3=', run_softmax_on_MNIST_mod3(temp_parameter=1))
+        #######################################################################
+        # 7. Classification Using Manually Crafted Features
+        #######################################################################
 
-    #######################################################################
-    # 7. Classification Using Manually Crafted Features
-    #######################################################################
+        ## Dimensionality reduction via PCA ##
+        elif sys.argv[1] == "pca":
+            print('softmax test_error=', run_softmax_pca_on_MNIST(temp_parameter=1))
 
-    ## Dimensionality reduction via PCA ##
-    elif sys.argv[1] == "pca":
-        print('softmax test_error=', run_softmax_pca_on_MNIST(temp_parameter=1))
+        ## Plot PCA representation and data reconstruction ##
+        elif sys.argv[1] == "plot_pca":
+            plot_pca()
 
-    ## Plot PCA representation and data reconstruction ##
-    elif sys.argv[1] == "plot_pca":
-        plot_pca()
+        ## Cubic Kernel ##
+        elif sys.argv[1] == "cubic":
+            print('softmax test_error=', run_softmax_pca_on_MNIST(temp_parameter=1))
 
-    ## Cubic Kernel ##
-    elif sys.argv[1] == "cubic":
-        print('softmax test_error=', run_softmax_pca_on_MNIST(temp_parameter=1))
+        ## Cubic SVM ##
+        elif sys.argv[1] == "cubic_svm":
+            print("Cubic Polynomial SVM test_error=", run_cubic_svm_on_MNIST())
 
-    ## Cubic SVM ##
-    elif sys.argv[1] == "cubic_svm":
-        print("Cubic Polynomial SVM test_error=", run_cubic_svm_on_MNIST())
+        ## RBF SVM ##
+        elif sys.argv[1] == "rbf_svm":
+            print("RBF SVM test_error=", run_rbf_svm_on_MNIST())
 
-    ## RBF SVM ##
-    elif sys.argv[1] == "rbf_svm":
-        print("RBF SVM test_error=", run_rbf_svm_on_MNIST())
+        # TODO: Implement RBF kernel softmax and add option to run it
+            
+        else:
+            display_usage()
+    
+    except IndexError:
+        display_usage()
+            
 
 if __name__ == "__main__":
     main()
